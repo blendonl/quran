@@ -49,3 +49,34 @@ android/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Whisper models
+*.bin
+*.pt
+
+# Test audio fixtures
+apps/server/tests/fixtures/audio/
+
+apps/server/app/quran/data/ipa_*.json
+apps/server/models/
+*.onnx
+*.pth
+*.safetensors
+*.gguf
+*.tflite
+*.tmp.*
+/graceful-prancing-snowflake.md
+/apps/server/frolicking-gliding-knuth.md
