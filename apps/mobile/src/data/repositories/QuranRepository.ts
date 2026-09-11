@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IQuranRepository } from "../../domain/interfaces/IQuranRepository";
 import { Surah } from "../../domain/models/Surah";
 import { Ayah } from "../../domain/models/Ayah";
+import { Translation } from "../../domain/models/Translation";
 import { QuranApiError } from "../../domain/errors/QuranApiError";
 import { QuranApiClient } from "./QuranApiClient";
 
@@ -47,13 +48,15 @@ export class QuranRepository implements IQuranRepository {
     return surah;
   }
 
-  async getAyahs(surahId: number): Promise<Ayah[]> {
-    const cacheKey = `${CACHE_PREFIX}ayahs_${surahId}`;
+  async getAyahs(surahId: number, translationId?: number): Promise<Ayah[]> {
+    const cacheKey = translationId != null
+      ? `${CACHE_PREFIX}ayahs_${surahId}_t${translationId}`
+      : `${CACHE_PREFIX}ayahs_${surahId}`;
     const cached = await this.getFromCache<Ayah[]>(cacheKey);
     if (cached) return cached;
 
     try {
-      const response = await this.apiClient.fetchVerses(surahId);
+      const response = await this.apiClient.fetchVerses(surahId, 1, translationId);
       const verses = response.verses as RawVerse[];
       const ayahs = verses.map(mapRawVerseToAyah);
 
@@ -62,6 +65,24 @@ export class QuranRepository implements IQuranRepository {
     } catch (error) {
       if (error instanceof QuranApiError) throw error;
       throw new QuranApiError(`Failed to fetch ayahs for surah ${surahId}: ${error}`);
+    }
+  }
+
+  async getTranslations(): Promise<Translation[]> {
+    const cacheKey = `${CACHE_PREFIX}translations_list`;
+    const cached = await this.getFromCache<Translation[]>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const response = await this.apiClient.fetchTranslations();
+      const raw = response.translations as RawTranslation[];
+      const translations = raw.map(mapRawTranslation);
+
+      await this.saveToCache(cacheKey, translations);
+      return translations;
+    } catch (error) {
+      if (error instanceof QuranApiError) throw error;
+      throw new QuranApiError(`Failed to fetch translations: ${error}`);
     }
   }
 
@@ -139,6 +160,14 @@ interface RawVerse {
   juz_number: number;
   text_uthmani: string;
   text_imlaei: string;
+  translations?: { text: string }[];
+}
+
+interface RawTranslation {
+  id: number;
+  name: string;
+  author_name: string;
+  language_name: string;
 }
 
 function mapRawChapterToSurah(raw: RawChapter): Surah {
@@ -159,8 +188,12 @@ function mapRawChapterToSurah(raw: RawChapter): Surah {
   };
 }
 
+function stripHtml(text: string): string {
+  return text.replace(/<[^>]*>/g, "");
+}
+
 function mapRawVerseToAyah(raw: RawVerse): Ayah {
-  return {
+  const ayah: Ayah = {
     id: raw.id,
     verseNumber: raw.verse_number,
     verseKey: raw.verse_key,
@@ -171,4 +204,19 @@ function mapRawVerseToAyah(raw: RawVerse): Ayah {
     textUthmani: raw.text_uthmani,
     textSimple: raw.text_imlaei,
   };
+  if (raw.translations?.[0]?.text) {
+    ayah.translation = stripHtml(raw.translations[0].text);
+  }
+  return ayah;
 }
+
+function mapRawTranslation(raw: RawTranslation): Translation {
+  return {
+    id: raw.id,
+    name: raw.name,
+    authorName: raw.author_name,
+    languageName: raw.language_name,
+  };
+}
+
+export const quranRepository = new QuranRepository();

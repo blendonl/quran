@@ -1,6 +1,9 @@
 export type { Surah } from "./Surah";
 export type { Ayah } from "./Ayah";
-export type { TranscriptionSegment } from "./TranscriptionSegment";
-export type { ElongatedCharacter, ElongationResult } from "./ElongationResult";
-export type { WordMatch, WordMatchStatus, RecitationResult } from "./RecitationResult";
-export type { WhisperModelInfo, WhisperModelStatus } from "./WhisperModel";
+export type { PositionUpdate } from "./PositionUpdate";
+export type { LetterStatusValue, LetterStatusUpdate } from "./LetterStatus";
+export type { Translation } from "./Translation";
+export type {
+  RecitationErrorDetail,
+  RecitationErrorUpdate,
+} from "./RecitationError";

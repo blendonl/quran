@@ -1,4 +1,5 @@
 import { Text, TextProps } from "react-native";
+import { RTL_TEXT } from "../../config/themeColors";
 
 interface ArabicTextProps extends TextProps {
   text: string;
@@ -16,8 +17,8 @@ const sizeClasses: Record<string, string> = {
 export function ArabicText({ text, size = "lg", className = "", ...props }: ArabicTextProps) {
   return (
     <Text
-      className={`font-arabic leading-loose text-gray-900 ${sizeClasses[size]} ${className}`}
-      style={{ writingDirection: "rtl", textAlign: "right" }}
+      className={`font-arabic leading-loose text-ink dark:text-d-ink ${sizeClasses[size]} ${className}`}
+      style={{ ...RTL_TEXT, textAlign: "right" }}
       {...props}
     >
       {text}

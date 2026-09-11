@@ -5,7 +5,10 @@ export const QURAN_API_ENDPOINTS = {
   chapter: (id: number) => `/chapters/${id}`,
   verses: (chapterId: number) => `/verses/by_chapter/${chapterId}`,
   verse: (verseKey: string) => `/verses/by_key/${verseKey}`,
+  translations: "/resources/translations",
 } as const;
+
+export const DEFAULT_TRANSLATION_ID = 20;
 
 export const QURAN_API_DEFAULT_PARAMS = {
   language: "en",

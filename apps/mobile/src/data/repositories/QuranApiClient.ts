@@ -5,6 +5,7 @@ interface ApiResponse<T> {
   chapters?: T;
   chapter?: T;
   verses?: T;
+  translations?: T;
   pagination?: {
     per_page: number;
     current_page: number;
@@ -33,13 +34,23 @@ export class QuranApiClient {
     });
   }
 
-  async fetchVerses(chapterId: number, page = 1): Promise<ApiResponse<unknown[]>> {
-    return this.get(QURAN_API_ENDPOINTS.verses(chapterId), {
+  async fetchVerses(chapterId: number, page = 1, translationId?: number): Promise<ApiResponse<unknown[]>> {
+    const params: Record<string, string> = {
       language: QURAN_API_DEFAULT_PARAMS.language,
       words: String(QURAN_API_DEFAULT_PARAMS.words),
       fields: QURAN_API_DEFAULT_PARAMS.fields,
       per_page: String(QURAN_API_DEFAULT_PARAMS.per_page),
       page: String(page),
+    };
+    if (translationId != null) {
+      params.translations = String(translationId);
+    }
+    return this.get(QURAN_API_ENDPOINTS.verses(chapterId), params);
+  }
+
+  async fetchTranslations(): Promise<ApiResponse<unknown[]>> {
+    return this.get(QURAN_API_ENDPOINTS.translations, {
+      language: QURAN_API_DEFAULT_PARAMS.language,
     });
   }
 

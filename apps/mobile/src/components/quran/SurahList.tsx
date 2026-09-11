@@ -17,7 +17,7 @@ export function SurahList({ surahs, isLoading, onSelectSurah }: SurahListProps) 
   if (surahs.length === 0) {
     return (
       <View className="flex-1 items-center justify-center p-4">
-        <Text className="text-base text-gray-500">No surahs available</Text>
+        <Text className="text-base text-ink-muted dark:text-d-ink-muted">No surahs available</Text>
       </View>
     );
   }

@@ -1,18 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { useColorScheme } from "nativewind";
+import { useSettingsStore } from "@src/stores/settingsStore";
 import "react-native-reanimated";
 import "../global.css";
-
-import { useColorScheme } from "@/components/useColorScheme";
 
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: "index",
 };
 
 SplashScreen.preventAutoHideAsync();
@@ -20,7 +20,16 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     ...Ionicons.font,
+    Amiri: require("../assets/fonts/Amiri-Regular.ttf"),
+    "Amiri-Bold": require("../assets/fonts/Amiri-Bold.ttf"),
   });
+
+  const storedScheme = useSettingsStore((s) => s.colorScheme);
+  const { colorScheme, setColorScheme } = useColorScheme();
+
+  useEffect(() => {
+    setColorScheme(storedScheme);
+  }, [storedScheme, setColorScheme]);
 
   useEffect(() => {
     if (error) throw error;
@@ -36,32 +45,14 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="surah/[id]"
-          options={{
-            title: "Select Ayah",
-            headerBackTitle: "Back",
-          }}
-        />
-        <Stack.Screen
-          name="recite"
-          options={{
-            title: "Recite",
-            headerBackTitle: "Back",
-          }}
-        />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+    <>
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="surah/[id]" />
+        <Stack.Screen name="settings" />
       </Stack>
-    </ThemeProvider>
+    </>
   );
 }

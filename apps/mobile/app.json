@@ -41,7 +41,7 @@
     "plugins": [
       "expo-router",
       [
-        "expo-audio",
+        "@siteed/expo-audio-studio",
         {
           "microphonePermission": "This app needs microphone access to listen to your Quran recitation."
         }

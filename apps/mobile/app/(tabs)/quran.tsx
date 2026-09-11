@@ -23,10 +23,10 @@ export default function QuranScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["bottom"]}>
-      <View className="border-b border-gray-100 px-4 pb-3 pt-2">
-        <Text className="text-lg font-bold text-gray-900">Select a Surah</Text>
-        <Text className="text-xs text-gray-500">Choose a surah to practice reciting</Text>
+    <SafeAreaView className="flex-1 bg-ivory dark:bg-d-bg" edges={["bottom"]}>
+      <View className="border-b border-surface-sep px-4 pb-3 pt-2 dark:border-d-sep">
+        <Text className="text-lg font-bold text-ink dark:text-d-ink">Select a Surah</Text>
+        <Text className="text-xs text-ink-muted dark:text-d-ink-muted">Choose a surah to practice reciting</Text>
       </View>
 
       {error ? (

@@ -1,20 +1,19 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { Surah } from "../domain/models/Surah";
 import { Ayah } from "../domain/models/Ayah";
-import { QuranRepository } from "../data/repositories/QuranRepository";
+import { quranRepository } from "../data/repositories/QuranRepository";
 
 export function useQuranData() {
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [ayahs, setAyahs] = useState<Ayah[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const repositoryRef = useRef(new QuranRepository());
 
   const loadSurahs = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await repositoryRef.current.getSurahs();
+      const data = await quranRepository.getSurahs();
       setSurahs(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load surahs");
@@ -23,11 +22,11 @@ export function useQuranData() {
     }
   }, []);
 
-  const loadAyahs = useCallback(async (surahId: number) => {
+  const loadAyahs = useCallback(async (surahId: number, translationId?: number) => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await repositoryRef.current.getAyahs(surahId);
+      const data = await quranRepository.getAyahs(surahId, translationId);
       setAyahs(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load ayahs");

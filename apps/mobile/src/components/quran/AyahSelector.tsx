@@ -1,5 +1,6 @@
 import { FlatList, Pressable, View, Text } from "react-native";
 import { Ayah } from "../../domain/models/Ayah";
+import { RTL_TEXT } from "../../config/themeColors";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 
 interface AyahSelectorProps {
@@ -39,23 +40,23 @@ interface AyahItemProps {
 function AyahItem({ ayah, isSelected, onPress }: AyahItemProps) {
   return (
     <Pressable
-      className={`border-b border-gray-100 px-4 py-3 ${isSelected ? "bg-primary-50" : "active:bg-gray-50"}`}
+      className={`border-b border-surface-sep px-4 py-3 dark:border-d-sep ${isSelected ? "bg-primary-50 dark:bg-primary-950" : "active:bg-surface-elevated dark:active:bg-d-elevated"}`}
       onPress={() => onPress(ayah)}
     >
       <View className="flex-row items-start">
         <View
-          className={`mr-3 h-8 w-8 items-center justify-center rounded-full ${isSelected ? "bg-primary-500" : "bg-gray-200"}`}
+          className={`mr-3 h-8 w-8 items-center justify-center rounded-full ${isSelected ? "bg-primary-500" : "bg-surface-elevated dark:bg-d-elevated"}`}
         >
           <Text
-            className={`text-xs font-bold ${isSelected ? "text-white" : "text-gray-600"}`}
+            className={`text-xs font-bold ${isSelected ? "text-white" : "text-ink-secondary dark:text-d-ink-secondary"}`}
           >
             {ayah.verseNumber}
           </Text>
         </View>
         <View className="flex-1">
           <Text
-            className="text-xl leading-10 text-gray-900"
-            style={{ fontFamily: "Amiri", writingDirection: "rtl", textAlign: "right" }}
+            className="text-xl leading-10 text-ink dark:text-d-ink"
+            style={{ fontFamily: "Amiri", ...RTL_TEXT, textAlign: "right" }}
           >
             {ayah.textUthmani}
           </Text>

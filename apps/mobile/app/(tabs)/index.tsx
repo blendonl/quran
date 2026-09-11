@@ -1,124 +1,61 @@
-import { View, Text, ScrollView } from "react-native";
-import { useEffect } from "react";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { RecordButton } from "@src/components/audio/RecordButton";
-import { ArabicText } from "@src/components/arabic/ArabicText";
-import { ElongatedTextDisplay } from "@src/components/arabic/ElongatedTextDisplay";
-import { AyahComparison } from "@src/components/arabic/AyahComparison";
 import { LoadingSpinner } from "@src/components/common/LoadingSpinner";
-import { ProgressBar } from "@src/components/common/ProgressBar";
 import { ErrorDisplay } from "@src/components/common/ErrorDisplay";
-import { useRecitation } from "@src/hooks/useRecitation";
-import { useSettingsStore } from "@src/stores/settingsStore";
+import { useStreamingRecitation } from "@src/hooks/useStreamingRecitation";
+import { useThemeColors } from "@src/config/themeColors";
 
 export default function ReciteScreen() {
   const {
     state,
-    selectedAyah,
-    transcribedText,
-    elongationResult,
-    recitationResult,
     errorMessage,
-    isWhisperReady,
-    isWhisperLoading,
-    whisperError,
-    isRecording,
-    initializeWhisper,
+    isStreaming,
+    isConnecting,
     startRecitation,
     stopRecitation,
     reset,
-  } = useRecitation();
+  } = useStreamingRecitation();
+  const router = useRouter();
+  const colors = useThemeColors();
 
-  const { modelDownloadProgress, modelStatus } = useSettingsStore();
-
-  useEffect(() => {
-    initializeWhisper();
-  }, [initializeWhisper]);
-
-  const handleRecordPress = async () => {
-    if (isRecording) {
-      await stopRecitation();
+  const handleRecordPress = () => {
+    if (isStreaming || isConnecting) {
+      stopRecitation();
     } else {
-      await startRecitation();
+      startRecitation();
     }
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["bottom"]}>
+    <SafeAreaView className="flex-1 bg-ivory dark:bg-d-bg" edges={["bottom"]}>
       <ScrollView className="flex-1" contentContainerClassName="pb-8">
-        <View className="items-center px-4 pt-6">
-          <Text className="mb-1 text-2xl font-bold text-gray-900">Quran Recitation</Text>
-          <Text className="mb-6 text-sm text-gray-500">
-            Practice your recitation with AI feedback
-          </Text>
-        </View>
-
-        {selectedAyah && (
-          <View className="mx-4 mb-6 rounded-xl bg-primary-50 p-4">
-            <Text className="mb-2 text-xs font-medium uppercase text-primary-600">
-              Selected Ayah ({selectedAyah.verseKey})
+        <View className="flex-row items-center justify-between px-4 pt-6">
+          <View className="flex-1">
+            <Text className="mb-1 text-2xl font-bold text-ink dark:text-d-ink">Quran Recitation</Text>
+            <Text className="mb-6 text-sm text-ink-muted dark:text-d-ink-muted">
+              Practice your recitation with AI feedback
             </Text>
-            <ArabicText text={selectedAyah.textUthmani} size="md" />
           </View>
-        )}
-
-        {!isWhisperReady && !whisperError && (
-          <View className="mx-4 mb-6">
-            {modelStatus === "downloading" ? (
-              <ProgressBar progress={modelDownloadProgress} label="Downloading speech model..." />
-            ) : (
-              <LoadingSpinner message="Initializing speech recognition..." />
-            )}
-          </View>
-        )}
-
-        {whisperError && (
-          <View className="mx-4 mb-6">
-            <ErrorDisplay message={whisperError} onRetry={initializeWhisper} />
-          </View>
-        )}
+          <Pressable onPress={() => router.push("/settings")} accessibilityLabel="Settings">
+            <Ionicons name="settings-outline" size={24} color={colors.ink.muted} />
+          </Pressable>
+        </View>
 
         <View className="items-center py-8">
           <RecordButton
-            isRecording={isRecording}
-            isProcessing={state === "processing"}
-            isDisabled={!isWhisperReady || isWhisperLoading}
+            isRecording={isStreaming}
+            isProcessing={isConnecting}
+            isDisabled={false}
             onPress={handleRecordPress}
           />
         </View>
 
-        {state === "processing" && (
+        {isConnecting && (
           <View className="mx-4">
-            <LoadingSpinner message="Processing your recitation..." />
-          </View>
-        )}
-
-        {transcribedText.length > 0 && state !== "processing" && (
-          <View className="mx-4 mb-4">
-            <Text className="mb-2 text-sm font-medium text-gray-500">Transcription</Text>
-            <View className="rounded-xl bg-gray-50 p-4">
-              <ArabicText text={transcribedText} size="md" />
-            </View>
-          </View>
-        )}
-
-        {elongationResult && state !== "processing" && (
-          <View className="mx-4 mb-4">
-            <Text className="mb-2 text-sm font-medium text-gray-500">
-              With Elongation Detection
-            </Text>
-            <View className="rounded-xl bg-gray-50 p-4">
-              <ElongatedTextDisplay result={elongationResult} />
-            </View>
-          </View>
-        )}
-
-        {recitationResult && state === "completed" && selectedAyah && (
-          <View className="mx-4 mb-4">
-            <Text className="mb-2 text-sm font-medium text-gray-500">Comparison</Text>
-            <View className="rounded-xl bg-gray-50 p-4">
-              <AyahComparison result={recitationResult} />
-            </View>
+            <LoadingSpinner message="Connecting to server..." />
           </View>
         )}
 

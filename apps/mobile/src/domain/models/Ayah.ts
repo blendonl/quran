@@ -8,4 +8,5 @@ export interface Ayah {
   juzNumber: number;
   textUthmani: string;
   textSimple: string;
+  translation?: string;
 }

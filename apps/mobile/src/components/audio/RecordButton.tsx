@@ -24,8 +24,8 @@ export function RecordButton({ isRecording, isProcessing, isDisabled, onPress }:
     if (isRecording) {
       pulseScale.value = withRepeat(
         withSequence(
-          withTiming(1.15, { duration: 800 }),
-          withTiming(1, { duration: 800 }),
+          withTiming(1.06, { duration: 900 }),
+          withTiming(1, { duration: 900 }),
         ),
         -1,
         true,
@@ -40,26 +40,31 @@ export function RecordButton({ isRecording, isProcessing, isDisabled, onPress }:
     transform: [{ scale: pulseScale.value }],
   }));
 
-  const buttonColor = isRecording ? "bg-red-500" : isDisabled ? "bg-gray-400" : "bg-primary-600";
+  const buttonColor = isRecording ? "bg-red-500" : isDisabled ? "bg-gray-400" : "bg-primary-500";
   const iconName = isRecording ? "stop" : "mic";
-  const label = isProcessing ? "Processing..." : isRecording ? "Tap to Stop" : "Tap to Recite";
+  const label = isProcessing ? "Connecting..." : isRecording ? "Tap to Stop" : "Tap to Recite";
 
   return (
     <View className="items-center">
       <Animated.View style={animatedStyle}>
-        <Pressable
-          className={`h-20 w-20 items-center justify-center rounded-full ${buttonColor} shadow-lg`}
-          onPress={onPress}
-          disabled={isDisabled || isProcessing}
-        >
-          {isProcessing ? (
-            <Ionicons name="hourglass-outline" size={32} color="white" />
-          ) : (
-            <Ionicons name={iconName} size={32} color="white" />
-          )}
-        </Pressable>
+        <View className="rounded-full border-2 border-gold-400 p-1">
+          <Pressable
+            className={`h-20 w-20 items-center justify-center rounded-full ${buttonColor} shadow-lg`}
+            onPress={onPress}
+            disabled={isDisabled || isProcessing}
+            accessibilityRole="button"
+            accessibilityLabel={label}
+            accessibilityState={{ disabled: isDisabled || isProcessing }}
+          >
+            {isProcessing ? (
+              <Ionicons name="cloud-upload-outline" size={32} color="white" />
+            ) : (
+              <Ionicons name={iconName} size={32} color="white" />
+            )}
+          </Pressable>
+        </View>
       </Animated.View>
-      <Text className="mt-3 text-sm text-gray-600">{label}</Text>
+      <Text className="mt-2 text-xs text-gold-600 dark:text-gold-400">{label}</Text>
     </View>
   );
 }
