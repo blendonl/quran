@@ -1,0 +1,10 @@
+{
+  "name": "server",
+  "private": true,
+  "scripts": {
+    "dev": "bash -c '.venv/bin/uvicorn app.main:app --reload --reload-dir app --host 0.0.0.0 --port 8001'",
+    "test": "python -m pytest tests/ -v",
+    "lint": "ruff check app/ tests/",
+    "fetch-data": "python scripts/fetch_quran_data.py"
+  }
+}
