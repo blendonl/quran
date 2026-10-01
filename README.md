@@ -6,6 +6,11 @@ you are in the Quran, follows you word by word and letter by letter, and sends
 back live feedback: current position, word and letter correctness, tajweed
 grades and recitation errors. The app highlights all of this on the Quran page.
 
+<p align="center">
+  <img src="docs/images/tracking.webp" width="280" alt="Following a recitation of Al-Fatihah: the word being recited is highlighted while the app streams audio to the server">
+  <img src="docs/images/home.webp" width="280" alt="The home screen: a Recite button that finds your place from any verse, above the list of surahs">
+</p>
+
 ## Architecture
 
 ```mermaid
